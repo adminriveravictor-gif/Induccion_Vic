@@ -5,6 +5,7 @@ import { useProgress, READING_MODULES } from '../hooks/useProgress';
 import { ChevronDown, ArrowLeft, ArrowRight, CheckCircle2, Award } from 'lucide-react';
 import ColombiaMap from '../components/ColombiaMap';
 import DerechosDeberesInteractivo from '../components/DerechosDeberesInteractivo';
+import WalkingPersonCursor from '../components/WalkingPersonCursor';
 
 export default function CourseViewer() {
   const { moduleName } = useParams<{ moduleName: string }>();
@@ -101,6 +102,9 @@ export default function CourseViewer() {
     <div className={`p-4 sm:p-6 max-w-5xl mx-auto bg-white dark:bg-gray-800 min-h-screen text-gray-800 dark:text-gray-100 transition-colors pb-20 ${
       isConoceTuInstitucion ? 'custom-cursor-conoce-institucion' : ''
     }`}>
+      {/* Cursor dinámico de persona caminando exclusivo de este módulo */}
+      {isConoceTuInstitucion && <WalkingPersonCursor />}
+
       {/* 1. Botón Volver a Módulos */}
       <button
         onClick={() => navigate('/induction')}
