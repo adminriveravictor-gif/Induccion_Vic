@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { courseContent, SectionItem } from '../data/courseContent';
 import { useProgress, READING_MODULES } from '../hooks/useProgress';
 import { ChevronDown, ArrowLeft, ArrowRight, CheckCircle2, Award } from 'lucide-react';
@@ -15,6 +15,20 @@ export default function CourseViewer() {
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
 
   const content = moduleName ? courseContent[moduleName] : null;
+  const isConoceTuInstitucion = moduleName === 'Conoce tu institución';
+  const isDerechosYDeberes = moduleName === 'Derechos y Deberes';
+
+  // Aplicar cursor personalizado única y exclusivamente en el módulo "Conoce tu institución"
+  useEffect(() => {
+    if (isConoceTuInstitucion) {
+      document.body.classList.add('custom-cursor-conoce-institucion');
+    } else {
+      document.body.classList.remove('custom-cursor-conoce-institucion');
+    }
+    return () => {
+      document.body.classList.remove('custom-cursor-conoce-institucion');
+    };
+  }, [isConoceTuInstitucion]);
 
   // Reading sequence indices
   const currentReadingIndex = useMemo(() => {
@@ -82,11 +96,11 @@ export default function CourseViewer() {
   }
 
   const isCurrentCompleted = isModuleCompleted(moduleName);
-  const isConoceTuInstitucion = moduleName === 'Conoce tu institución';
-  const isDerechosYDeberes = moduleName === 'Derechos y Deberes';
 
   return (
-    <div className="p-4 sm:p-6 max-w-5xl mx-auto bg-white dark:bg-gray-800 min-h-screen text-gray-800 dark:text-gray-100 transition-colors pb-20">
+    <div className={`p-4 sm:p-6 max-w-5xl mx-auto bg-white dark:bg-gray-800 min-h-screen text-gray-800 dark:text-gray-100 transition-colors pb-20 ${
+      isConoceTuInstitucion ? 'custom-cursor-conoce-institucion' : ''
+    }`}>
       {/* 1. Botón Volver a Módulos */}
       <button
         onClick={() => navigate('/induction')}

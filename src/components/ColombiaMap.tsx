@@ -67,8 +67,11 @@ export default function ColombiaMap() {
   const [mapStyle, setMapStyle] = useState<MapStyle>('classic');
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isBlurring, setIsBlurring] = useState<boolean>(false);
+  const [blurKey, setBlurKey] = useState<number>(0);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
+  const blurTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Regional seleccionada
   const currentRegional: RegionalSENA | undefined = useMemo(() => {
@@ -107,6 +110,15 @@ export default function ColombiaMap() {
 
   const handleSelectRegional = (regId: string) => {
     setSelectedRegionalId(regId);
+    setIsBlurring(true);
+    setBlurKey((prev) => prev + 1);
+
+    if (blurTimerRef.current) {
+      clearTimeout(blurTimerRef.current);
+    }
+    blurTimerRef.current = setTimeout(() => {
+      setIsBlurring(false);
+    }, 400);
   };
 
   const handleZoom = (delta: number) => {
@@ -332,7 +344,7 @@ export default function ColombiaMap() {
           </div>
 
           {/* Lienzo SVG con vista exacta de Colombia */}
-          <div className="w-full max-w-[480px] aspect-[740/945] relative flex items-center justify-center my-auto">
+          <div className={`w-full max-w-[480px] aspect-[740/945] relative flex items-center justify-center my-auto transition-all duration-300 ${isBlurring ? 'filter blur-[3px] opacity-85' : 'filter blur-0 opacity-100'}`}>
             <svg
               ref={svgRef}
               viewBox={COLOMBIA_VIEWBOX}
@@ -621,9 +633,25 @@ export default function ColombiaMap() {
         </div>
 
         {/* LADO DERECHO: Panel Dinámico de la Regional y Centros */}
-        <div className="lg:col-span-6 p-6 flex flex-col justify-between bg-white dark:bg-gray-800">
+        <div className="lg:col-span-6 p-6 flex flex-col justify-between bg-white dark:bg-gray-800 relative overflow-hidden">
+          {/* Indicador de efecto Blur / Refocus al cambiar de regional */}
+          {isBlurring && (
+            <div className="absolute inset-0 bg-white/40 dark:bg-gray-900/40 backdrop-blur-[4px] z-10 pointer-events-none transition-opacity duration-300 flex items-center justify-center">
+              <span className="px-3 py-1.5 rounded-full bg-[#39A900] text-white text-xs font-bold shadow-lg animate-pulse">
+                Cargando Regional...
+              </span>
+            </div>
+          )}
+
           {currentRegional && (
-            <div className="space-y-6 animate-fadeIn">
+            <div
+              key={blurKey}
+              className={`space-y-6 transition-all duration-300 ${
+                isBlurring
+                  ? 'filter blur-[5px] scale-[0.99] opacity-80'
+                  : 'filter blur-0 scale-100 opacity-100'
+              } animate-blur-regional`}
+            >
               {/* Cabecera de la Regional */}
               <div className="pb-4 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between gap-2 flex-wrap mb-2">
