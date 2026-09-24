@@ -1,0 +1,6 @@
+{
+  "name": "SENA Inducción Adaptativa",
+  "description": "Aplicación para instructores SENA para la inducción del Acuerdo 009 de 2024.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

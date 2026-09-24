@@ -1,0 +1,67 @@
+{
+  "entities": {
+    "userProgress": {
+      "title": "User Progress",
+      "description": "Tracks the progress of a user through the induction modules.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "completedModules": { "type": "array" },
+        "examScore": { "type": "number" },
+        "examPassed": { "type": "boolean" }
+      },
+      "required": ["userId", "completedModules"]
+    },
+    "apprenticeProfile": {
+      "title": "Apprentice Profile",
+      "description": "Basic identification and characterization group of the SENA apprentice.",
+      "type": "object",
+      "properties": {
+        "documento": { "type": "string" },
+        "tipoDocumento": { "type": "string" },
+        "nombreCompleto": { "type": "string" },
+        "ficha": { "type": "string" },
+        "email": { "type": "string" },
+        "telefono": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["documento", "tipoDocumento", "nombreCompleto", "ficha"]
+    },
+    "evaluationRecord": {
+      "title": "Evaluation Record and Responses Repository",
+      "description": "Stores evaluation results, summary metrics, and itemized responses for each attempt.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "documento": { "type": "string" },
+        "nombreCompleto": { "type": "string" },
+        "ficha": { "type": "string" },
+        "regional": { "type": "string" },
+        "centro": { "type": "string" },
+        "modalidad": { "type": "string" },
+        "score": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "percentage": { "type": "number" },
+        "passed": { "type": "boolean" },
+        "submittedAt": { "type": "string" },
+        "responses": { "type": "array" }
+      },
+      "required": ["id", "documento", "nombreCompleto", "ficha", "score", "totalQuestions", "percentage", "passed", "responses"]
+    }
+  },
+  "firestore": {
+    "/userProgress/{userId}": {
+      "schema": { "$ref": "#/entities/userProgress" },
+      "description": "User progress document."
+    },
+    "/apprentices/{documento}": {
+      "schema": { "$ref": "#/entities/apprenticeProfile" },
+      "description": "Apprentice profile record indexed by document number."
+    },
+    "/evaluations/{evaluationId}": {
+      "schema": { "$ref": "#/entities/evaluationRecord" },
+      "description": "Repository of module evaluation submissions and detailed responses."
+    }
+  }
+}
